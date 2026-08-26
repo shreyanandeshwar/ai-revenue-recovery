@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -24,6 +25,11 @@ public class TransactionController {
     public List<Transaction> getTransactions() {
         return repository.findAll();
     }
+    @PostMapping
+public Transaction createTransaction(@RequestBody Transaction transaction) {
+    transaction.setRecovered(false);
+    return repository.save(transaction);
+}
     @PostMapping("/seed")
 public String seedTransactions() {
 

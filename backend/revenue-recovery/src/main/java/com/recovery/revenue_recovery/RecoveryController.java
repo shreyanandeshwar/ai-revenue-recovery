@@ -25,4 +25,15 @@ public class RecoveryController {
 
         return aiRecoveryService.analyzeTransaction(transaction);
     }
+    @PostMapping("/execute/{id}")
+public Transaction executeRecovery(@PathVariable String id) {
+
+    Transaction transaction = transactionRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+    transaction.setRecovered(true);
+    transaction.setStatus("Recovered");
+
+    return transactionRepository.save(transaction);
+}
 }

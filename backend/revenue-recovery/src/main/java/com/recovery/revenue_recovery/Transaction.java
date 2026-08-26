@@ -14,6 +14,7 @@ public class Transaction {
     private String reason;
     private String status;
     private String createdAt;
+    private boolean recovered;
 
     public Transaction() {
     }
@@ -73,5 +74,12 @@ public class Transaction {
     public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
+    public boolean isRecovered() {
+    return recovered;
+}
+
+public void setRecovered(boolean recovered) {
+    this.recovered = recovered;
+}
 }
 
