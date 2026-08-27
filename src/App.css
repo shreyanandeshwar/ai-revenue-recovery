@@ -373,3 +373,11 @@ button:hover {
 .filters select:focus {
   border-color: #2563eb;
 }
+
+.recovery-value {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+}

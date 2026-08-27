@@ -65,9 +65,9 @@ function AIRecovery() {
     }
   }
 
-  const pendingTransactions = transactions.filter(
-    (transaction) => transaction.status !== "Recovered"
-  )
+  const pendingTransactions = transactions
+  .filter((transaction) => transaction.status !== "Recovered")
+  .sort((a, b) => b.amount - a.amount)
 
   return (
     <div className="dashboard">
@@ -93,8 +93,12 @@ function AIRecovery() {
                   <strong>{transaction.customer}</strong>
 
                   <p>
-                    ₹{transaction.amount} · {transaction.reason}
+                    ₹{transaction.amount.toLocaleString()} · {transaction.reason}
                   </p>
+                  <span className="recovery-value">
+  Recovery opportunity: ₹
+  {(transaction.amount * 0.7).toLocaleString()}
+</span>
                 </div>
 
                 <button

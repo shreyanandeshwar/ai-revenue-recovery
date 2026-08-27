@@ -89,6 +89,50 @@ function Dashboard() {
           {transactions.length} transactions are currently being monitored.
         </p>
       </div>
+      <div className="revenue-section">
+  <h2>Recent Activity</h2>
+
+  {transactions.length === 0 ? (
+    <p>No transaction activity yet.</p>
+  ) : (
+    <table>
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Amount</th>
+          <th>Reason</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {transactions.slice(0, 5).map((transaction) => (
+          <tr key={transaction.id}>
+            <td>{transaction.customer}</td>
+
+            <td>
+              ₹{transaction.amount.toLocaleString()}
+            </td>
+
+            <td>{transaction.reason}</td>
+
+            <td>
+              <span
+                className={`status-badge ${
+                  transaction.status === "Recovered"
+                    ? "status-recovered"
+                    : "status-pending"
+                }`}
+              >
+                {transaction.status}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )}
+</div>
       <div className="chart-section">
   <div>
     <h2>Revenue Overview</h2>
