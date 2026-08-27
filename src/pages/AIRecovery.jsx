@@ -69,6 +69,40 @@ function AIRecovery() {
   .filter((transaction) => transaction.status !== "Recovered")
   .sort((a, b) => b.amount - a.amount)
 
+  const totalAtRisk = pendingTransactions.reduce(
+  (total, transaction) => total + transaction.amount,
+  0
+)
+
+const potentialRecovery = pendingTransactions.reduce(
+  (total, transaction) => {
+    let probability = 0.3
+
+    if (transaction.reason === "Payment Failed") {
+      if (transaction.amount >= 10000) {
+        probability = 0.85
+      } else if (transaction.amount >= 5000) {
+        probability = 0.80
+      } else {
+        probability = 0.70
+      }
+    } else if (transaction.reason === "Checkout Abandoned") {
+      if (transaction.amount >= 10000) {
+        probability = 0.85
+      } else if (transaction.amount >= 5000) {
+        probability = 0.80
+      } else {
+        probability = 0.65
+      }
+    } else if (transaction.reason === "Subscription Failed") {
+      probability = transaction.amount >= 5000 ? 0.90 : 0.85
+    }
+
+    return total + transaction.amount * probability
+  },
+  0
+)
+
   return (
     <div className="dashboard">
       <h1>AI Recovery</h1>
@@ -76,6 +110,23 @@ function AIRecovery() {
       <p className="subtitle">
         Analyze at-risk transactions and take intelligent recovery actions
       </p>
+
+      <div className="cards">
+  <div className="card">
+    <p>Transactions at Risk</p>
+    <h2>{pendingTransactions.length}</h2>
+  </div>
+
+  <div className="card">
+    <p>Total Revenue at Risk</p>
+    <h2>₹{totalAtRisk.toLocaleString()}</h2>
+  </div>
+
+  <div className="card">
+    <p>Potential Recovery</p>
+    <h2>₹{Math.round(potentialRecovery).toLocaleString()}</h2>
+  </div>
+</div>
 
       <div className="recovery-layout">
         <div className="recovery-list">

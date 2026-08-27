@@ -4,6 +4,8 @@ function Transactions() {
   const [transactions, setTransactions] = useState([])
 const [showForm, setShowForm] = useState(false)
 
+const [selectedFile, setSelectedFile] = useState(null)
+
 const [search, setSearch] = useState("")
 const [statusFilter, setStatusFilter] = useState("All")
 const [reasonFilter, setReasonFilter] = useState("All")
@@ -77,6 +79,42 @@ const [reasonFilter, setReasonFilter] = useState("All")
     }
   }
 
+  const importCSV = async () => {
+  if (!selectedFile) {
+    alert("Please select a CSV file first")
+    return
+  }
+
+  const formData = new FormData()
+  formData.append("file", selectedFile)
+
+  try {
+    const response = await fetch(
+      "http://localhost:8080/api/transactions/import",
+      {
+        method: "POST",
+        body: formData,
+      }
+    )
+
+    const message = await response.text()
+
+    alert(message)
+
+    const refreshedResponse = await fetch(
+      "http://localhost:8080/api/transactions"
+    )
+
+    const data = await refreshedResponse.json()
+    setTransactions(data)
+
+    setSelectedFile(null)
+  } catch (error) {
+    console.error("CSV import failed:", error)
+    alert("CSV import failed")
+  }
+}
+
   return (
     <div className="dashboard">
       <div className="page-header">
@@ -87,9 +125,27 @@ const [reasonFilter, setReasonFilter] = useState("All")
           </p>
         </div>
 
-        <button onClick={() => setShowForm(!showForm)}>
-          + Add Transaction
-        </button>
+        <div className="transaction-actions">
+  <button onClick={() => setShowForm(!showForm)}>
+    + Add Transaction
+  </button>
+
+  <label className="import-button">
+    Import CSV
+    <input
+      type="file"
+      accept=".csv"
+      onChange={(e) => setSelectedFile(e.target.files[0])}
+      hidden
+    />
+  </label>
+
+  {selectedFile && (
+    <button onClick={importCSV}>
+      Upload {selectedFile.name}
+    </button>
+  )}
+</div>
       </div>
 
       {showForm && (

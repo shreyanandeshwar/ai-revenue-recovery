@@ -3,6 +3,8 @@ package com.recovery.revenue_recovery;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+
+
 @Document(collection = "transactions")
 public class Transaction {
 

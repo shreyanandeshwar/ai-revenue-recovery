@@ -17,61 +17,86 @@ public class AIRecoveryService {
         double recoveryProbability;
 
         // Payment failures
-        if (reason.equalsIgnoreCase("Payment Failed")) {
+if (reason.equalsIgnoreCase("Payment Failed")) {
 
-            if (amount >= 5000) {
-                action = "Retry payment and send personalized payment reminder";
-                recoveryProbability = 0.80;
-                priority = "HIGH";
+    if (amount >= 10000) {
+        action = "Retry payment and send personalized payment reminder";
+        recoveryProbability = 0.85;
+        priority = "HIGH";
 
-            } else {
-                action = "Retry payment after 30 minutes";
-                recoveryProbability = 0.70;
-                priority = "MEDIUM";
-            }
+    } else if (amount >= 5000) {
+        action = "Retry payment and send payment reminder";
+        recoveryProbability = 0.80;
+        priority = "HIGH";
 
-            explanation =
-                    "Payment failure can be caused by temporary payment issues. "
-                    + "A controlled retry gives the customer another opportunity "
-                    + "to complete the transaction.";
-        }
+    } else {
+        action = "Retry payment after 30 minutes";
+        recoveryProbability = 0.70;
+        priority = "MEDIUM";
+    }
 
-        // Abandoned checkout
-        else if (reason.equalsIgnoreCase("Checkout Abandoned")) {
+    explanation =
+            "The payment failure may be temporary. "
+            + "A controlled retry can give the customer another opportunity "
+            + "to complete the payment.";
+}
 
-            action = "Send personalized checkout recovery reminder";
-            recoveryProbability = 0.75;
-            priority = "HIGH";
+// Abandoned checkout
+else if (reason.equalsIgnoreCase("Checkout Abandoned")) {
 
-            explanation =
-                    "The customer reached checkout but did not complete payment. "
-                    + "This indicates strong purchase intent, making a personalized "
-                    + "recovery message an appropriate intervention.";
-        }
+    if (amount >= 10000) {
+        action = "Send personalized checkout reminder with priority follow-up";
+        recoveryProbability = 0.85;
+        priority = "HIGH";
 
-        // Subscription failure
-        else if (reason.equalsIgnoreCase("Subscription Failed")) {
+    } else if (amount >= 5000) {
+        action = "Send personalized checkout recovery reminder";
+        recoveryProbability = 0.80;
+        priority = "HIGH";
 
-            action = "Send subscription payment recovery link";
-            recoveryProbability = 0.85;
-            priority = "HIGH";
+    } else {
+        action = "Send checkout recovery reminder";
+        recoveryProbability = 0.65;
+        priority = "MEDIUM";
+    }
 
-            explanation =
-                    "A failed subscription payment can cause recurring revenue loss. "
-                    + "Recovering the payment quickly protects future revenue.";
-        }
+    explanation =
+            "The customer reached the checkout stage, indicating purchase intent. "
+            + "A timely personalized reminder may encourage the customer "
+            + "to complete the purchase.";
+}
 
-        // Unknown situation
-        else {
+// Subscription failure
+else if (reason.equalsIgnoreCase("Subscription Failed")) {
 
-            action = "Review transaction manually";
-            recoveryProbability = 0.30;
-            priority = "LOW";
+    if (amount >= 5000) {
+        action = "Send subscription recovery link and priority reminder";
+        recoveryProbability = 0.90;
+        priority = "HIGH";
 
-            explanation =
-                    "The system does not have enough information to safely "
-                    + "automate a recovery action.";
-        }
+    } else {
+        action = "Send subscription payment recovery link";
+        recoveryProbability = 0.85;
+        priority = "HIGH";
+    }
+
+    explanation =
+            "A failed subscription payment can result in both immediate "
+            + "and recurring revenue loss. Recovering the payment quickly "
+            + "helps protect future revenue.";
+}
+
+// Other situations
+else {
+
+    action = "Review transaction manually";
+    recoveryProbability = 0.30;
+    priority = "LOW";
+
+    explanation =
+            "The system does not have enough information to safely "
+            + "automate a recovery action.";
+}
 
         double expectedRecovery = amount * recoveryProbability;
 

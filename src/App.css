@@ -381,3 +381,23 @@ button:hover {
   font-weight: 600;
   color: #2563eb;
 }
+
+.transaction-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.import-button {
+  background: #111827;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 7px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.import-button:hover {
+  background: #1f2937;
+}
