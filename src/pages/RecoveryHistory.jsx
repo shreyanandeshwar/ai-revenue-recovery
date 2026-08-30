@@ -17,9 +17,10 @@ function RecoveryHistory() {
   )
 
   const totalRecovered = recoveredTransactions.reduce(
-    (total, transaction) => total + transaction.amount,
-    0
-  )
+  (total, transaction) =>
+    total + (transaction.recoveredAmount || transaction.amount),
+  0
+)
 
   return (
     <div className="dashboard">
@@ -39,6 +40,21 @@ function RecoveryHistory() {
           <p>Successful Recoveries</p>
           <h2>{recoveredTransactions.length}</h2>
         </div>
+        <div className="card">
+  <p>Average Recovery Score</p>
+  <h2>
+    {recoveredTransactions.length > 0
+      ? Math.round(
+          recoveredTransactions.reduce(
+            (total, transaction) =>
+              total + (transaction.recoveryScore || 0),
+            0
+          ) / recoveredTransactions.length
+        )
+      : 0}
+    /100
+  </h2>
+</div>
       </div>
 
       <div className="revenue-section">
@@ -53,6 +69,9 @@ function RecoveryHistory() {
                 <th>Customer</th>
                 <th>Amount</th>
                 <th>Reason</th>
+                <th>Recovery Score</th>
+                <th>Recovered Amount</th>
+                <th>AI Action</th>
                 <th>Date</th>
                 <th>Status</th>
               </tr>
@@ -61,12 +80,40 @@ function RecoveryHistory() {
             <tbody>
               {recoveredTransactions.map((transaction) => (
                 <tr key={transaction.id}>
-                  <td>{transaction.customer}</td>
-                  <td>₹{transaction.amount}</td>
-                  <td>{transaction.reason}</td>
-                  <td>{transaction.createdAt}</td>
-                  <td>{transaction.status}</td>
-                </tr>
+  <td>{transaction.customer}</td>
+
+  <td>
+    ₹{transaction.amount.toLocaleString()}
+  </td>
+
+  <td>{transaction.reason}</td>
+
+  <td>
+    {transaction.recoveryScore
+      ? `${Math.round(transaction.recoveryScore)}/100`
+      : "N/A"}
+  </td>
+
+  <td>
+    ₹{transaction.recoveredAmount
+      ? transaction.recoveredAmount.toLocaleString()
+      : "0"}
+  </td>
+  
+  <td>
+  {transaction.recoveryAction || "Recovery action recorded"}
+</td>
+
+  <td>
+    {transaction.recoveredAt || transaction.createdAt}
+  </td>
+
+  <td>
+    <span className="status-badge status-recovered">
+      {transaction.status}
+    </span>
+  </td>
+</tr>
               ))}
             </tbody>
           </table>

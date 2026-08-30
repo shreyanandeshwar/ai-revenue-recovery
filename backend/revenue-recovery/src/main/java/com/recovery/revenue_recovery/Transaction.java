@@ -3,8 +3,6 @@ package com.recovery.revenue_recovery;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-
-
 @Document(collection = "transactions")
 public class Transaction {
 
@@ -17,6 +15,11 @@ public class Transaction {
     private String status;
     private String createdAt;
     private boolean recovered;
+    private String recoveryAction;
+    private double recoveryProbability;
+    private double recoveryScore;
+    private double recoveredAmount;
+    private String recoveredAt;
 
     public Transaction() {
     }
@@ -82,6 +85,45 @@ public class Transaction {
 
 public void setRecovered(boolean recovered) {
     this.recovered = recovered;
+}
+public String getRecoveryAction() {
+    return recoveryAction;
+}
+
+public void setRecoveryAction(String recoveryAction) {
+    this.recoveryAction = recoveryAction;
+}
+
+public double getRecoveryProbability() {
+    return recoveryProbability;
+}
+
+public void setRecoveryProbability(double recoveryProbability) {
+    this.recoveryProbability = recoveryProbability;
+}
+
+public double getRecoveryScore() {
+    return recoveryScore;
+}
+
+public void setRecoveryScore(double recoveryScore) {
+    this.recoveryScore = recoveryScore;
+}
+
+public double getRecoveredAmount() {
+    return recoveredAmount;
+}
+
+public void setRecoveredAmount(double recoveredAmount) {
+    this.recoveredAmount = recoveredAmount;
+}
+
+public String getRecoveredAt() {
+    return recoveredAt;
+}
+
+public void setRecoveredAt(String recoveredAt) {
+    this.recoveredAt = recoveredAt;
 }
 }
 

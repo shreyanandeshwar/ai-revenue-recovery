@@ -31,8 +31,31 @@ public Transaction executeRecovery(@PathVariable String id) {
     Transaction transaction = transactionRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
+    RecoveryRecommendation recommendation =
+            aiRecoveryService.analyzeTransaction(transaction);
+
     transaction.setRecovered(true);
     transaction.setStatus("Recovered");
+
+    transaction.setRecoveryAction(
+            recommendation.getAction()
+    );
+
+    transaction.setRecoveryProbability(
+            recommendation.getRecoveryProbability()
+    );
+
+    transaction.setRecoveryScore(
+            recommendation.getRecoveryScore()
+    );
+
+    transaction.setRecoveredAmount(
+            recommendation.getExpectedRecovery()
+    );
+
+    transaction.setRecoveredAt(
+            java.time.LocalDateTime.now().toString()
+    );
 
     return transactionRepository.save(transaction);
 }

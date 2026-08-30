@@ -27,8 +27,12 @@ function Dashboard() {
     .reduce((total, transaction) => total + transaction.amount, 0)
 
   const recoveredRevenue = transactions
-    .filter((transaction) => transaction.status === "Recovered")
-    .reduce((total, transaction) => total + transaction.amount, 0)
+  .filter((transaction) => transaction.status === "Recovered")
+  .reduce(
+    (total, transaction) =>
+      total + (transaction.recoveredAmount || transaction.amount),
+    0
+  )
 
   const totalRevenue = revenueAtRisk + recoveredRevenue
 
@@ -143,9 +147,14 @@ function Dashboard() {
     <BarChart data={chartData}>
       <CartesianGrid strokeDasharray="3 3" />
       <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip />
-      <Bar dataKey="amount">
+      <YAxis tickFormatter={(value) =>
+    `₹${value.toLocaleString()}`
+  }/>
+      <Tooltip formatter={(value) => [
+    `₹${Number(value).toLocaleString()}`,
+    "Revenue",
+  ]}/>
+      <Bar dataKey="amount" radius={[8, 8, 0, 0]}>
   {chartData.map((entry, index) => (
     <Cell
       key={`cell-${index}`}

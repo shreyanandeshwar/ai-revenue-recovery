@@ -5,6 +5,8 @@ function AIRecovery() {
   const [selectedTransaction, setSelectedTransaction] = useState(null)
   const [recommendation, setRecommendation] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [executing, setExecuting] = useState(false)
+const [recoveryResult, setRecoveryResult] = useState(null)
 
   useEffect(() => {
     fetch("http://localhost:8080/api/transactions")
@@ -38,32 +40,47 @@ function AIRecovery() {
   }
 
   const executeRecovery = async () => {
-    if (!selectedTransaction) return
+  if (!selectedTransaction) return
 
-    try {
-      const response = await fetch(
-        `http://localhost:8080/api/recovery/execute/${selectedTransaction.id}`,
-        {
-          method: "POST",
-        }
+  setExecuting(true)
+  setRecoveryResult(null)
+
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
+    const response = await fetch(
+      `http://localhost:8080/api/recovery/execute/${selectedTransaction.id}`,
+      {
+        method: "POST",
+      }
+    )
+
+    const updatedTransaction = await response.json()
+
+    setTransactions((currentTransactions) =>
+      currentTransactions.map((transaction) =>
+        transaction.id === updatedTransaction.id
+          ? updatedTransaction
+          : transaction
       )
+    )
 
-      const updatedTransaction = await response.json()
+    setRecoveryResult({
+      success: true,
+      amount: updatedTransaction.amount,
+      customer: updatedTransaction.customer,
+    })
 
-      setTransactions((currentTransactions) =>
-        currentTransactions.map((transaction) =>
-          transaction.id === updatedTransaction.id
-            ? updatedTransaction
-            : transaction
-        )
-      )
+  } catch (error) {
+    console.error("Recovery execution failed:", error)
 
-      setSelectedTransaction(null)
-      setRecommendation(null)
-    } catch (error) {
-      console.error("Recovery execution failed:", error)
-    }
+    setRecoveryResult({
+      success: false,
+    })
+  } finally {
+    setExecuting(false)
   }
+}
 
   const pendingTransactions = transactions
   .filter((transaction) => transaction.status !== "Recovered")
@@ -227,13 +244,52 @@ const potentialRecovery = pendingTransactions.reduce(
                   </p>
 
                   <p>
+  <strong>Recovery Score:</strong>{" "}
+  <span className="recovery-score">
+    {Math.round(recommendation.recoveryScore)}/100
+  </span>
+</p>
+
+                  <p>
                     <strong>Potential Recovery:</strong> ₹
                     {recommendation.expectedRecovery}
                   </p>
 
-                  <button onClick={executeRecovery}>
-                    Execute Recovery
-                  </button>
+                  {!recoveryResult?.success && (
+  <button
+    onClick={executeRecovery}
+    disabled={executing}
+  >
+    {executing ? "Processing Recovery..." : "Execute Recovery"}
+  </button>
+)}
+{executing && (
+  <div className="recovery-processing">
+    <strong>AI Recovery Agent is processing...</strong>
+    <p>Attempting the recommended recovery action.</p>
+  </div>
+)}
+
+{recoveryResult && recoveryResult.success && (
+  <div className="recovery-success">
+    <h3>✓ Recovery Successful</h3>
+
+    <p>
+      ₹{recoveryResult.amount.toLocaleString()} recovered
+      for {recoveryResult.customer}.
+    </p>
+  </div>
+)}
+
+{recoveryResult && !recoveryResult.success && (
+  <div className="recovery-failure">
+    <h3>Recovery Failed</h3>
+
+    <p>
+      The recovery action could not be completed.
+    </p>
+  </div>
+)}
                 </>
               )}
             </>

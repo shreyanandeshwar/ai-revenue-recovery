@@ -7,6 +7,7 @@ public class RecoveryRecommendation {
     private String priority;
     private double expectedRecovery;
     private double recoveryProbability;
+    private double recoveryScore;
 
     public RecoveryRecommendation() {
     }
@@ -16,13 +17,15 @@ public class RecoveryRecommendation {
             String reason,
             String priority,
             double expectedRecovery,
-            double recoveryProbability) {
+            double recoveryProbability,
+            double recoveryScore) {
 
         this.action = action;
         this.reason = reason;
         this.priority = priority;
         this.expectedRecovery = expectedRecovery;
         this.recoveryProbability = recoveryProbability;
+        this.recoveryScore = recoveryScore;
     }
 
     public String getAction() {
@@ -64,4 +67,11 @@ public class RecoveryRecommendation {
     public void setRecoveryProbability(double recoveryProbability) {
         this.recoveryProbability = recoveryProbability;
     }
+    public double getRecoveryScore() {
+    return recoveryScore;
+}
+
+public void setRecoveryScore(double recoveryScore) {
+    this.recoveryScore = recoveryScore;
+}
 }

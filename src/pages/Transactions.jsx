@@ -79,6 +79,36 @@ const [reasonFilter, setReasonFilter] = useState("All")
     }
   }
 
+  const deleteTransaction = async (id) => {
+  const confirmed = window.confirm(
+    "Are you sure you want to delete this transaction?"
+  )
+
+  if (!confirmed) return
+
+  try {
+    const response = await fetch(
+      `http://localhost:8080/api/transactions/${id}`,
+      {
+        method: "DELETE",
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error("Failed to delete transaction")
+    }
+
+    setTransactions((currentTransactions) =>
+      currentTransactions.filter(
+        (transaction) => transaction.id !== id
+      )
+    )
+  } catch (error) {
+    console.error("Delete failed:", error)
+    alert("Failed to delete transaction")
+  }
+}
+
   const importCSV = async () => {
   if (!selectedFile) {
     alert("Please select a CSV file first")
@@ -243,6 +273,7 @@ const [reasonFilter, setReasonFilter] = useState("All")
         <th>Reason</th>
         <th>Status</th>
         <th>Date</th>
+        <th>Action</th>
       </tr>
     </thead>
 
@@ -268,6 +299,14 @@ const [reasonFilter, setReasonFilter] = useState("All")
           </td>
 
           <td>{transaction.createdAt}</td>
+          <td>
+  <button
+    className="delete-button"
+    onClick={() => deleteTransaction(transaction.id)}
+  >
+    Delete
+  </button>
+</td>
         </tr>
       ))}
     </tbody>

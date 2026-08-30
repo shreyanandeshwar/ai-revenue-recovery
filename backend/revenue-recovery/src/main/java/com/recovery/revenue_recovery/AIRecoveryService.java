@@ -98,6 +98,25 @@ else {
             + "automate a recovery action.";
 }
 
+double recoveryScore = recoveryProbability * 100;
+
+if (amount >= 10000) {
+    recoveryScore += 5;
+} else if (amount >= 5000) {
+    recoveryScore += 3;
+}
+
+if (priority.equalsIgnoreCase("HIGH")) {
+    recoveryScore += 5;
+}
+
+if (recoveryScore > 100) {
+    recoveryScore = 100;
+}
+
+recoveryScore =
+        Math.round(recoveryScore * 100.0) / 100.0;
+
         double expectedRecovery = amount * recoveryProbability;
 
         return new RecoveryRecommendation(
@@ -105,7 +124,8 @@ else {
         explanation,
         priority,
         Math.round(expectedRecovery * 100.0) / 100.0,
-        recoveryProbability
+        recoveryProbability,
+        recoveryScore
 );
     }
 }
